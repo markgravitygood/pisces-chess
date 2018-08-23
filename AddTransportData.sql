@@ -2,12 +2,22 @@ DECLARE
   -- 
   CURSOR c IS 
     SELECT cts.claim_transaction_summary_id, 
-           cts.case_detail_id 
+           cts.case_detail_id, B.PAT_PROCEDURE_ID
     FROM   claim_transaction_summary cts 
-    WHERE  cts.claim_transaction_summary_id = v_cts_id; 
+    INNER JOIN CLAIM_TRANSACTION_DETAIL CTD
+    ON CTS.CLAIM_TRANSACTION_SUMMARY_ID = CTD.CLAIM_TRANSACTION_SUMMARY_ID
+    INNER JOIN PAT_PROCEDURE_BALANCE B
+    ON CTD.PAT_PROCEDURE_BALANCE_ID = B.PAT_PROCEDURE_BALANCE_ID
+    WHERE  cts.claim_transaction_summary_id = v_cts_id;
 
 -- 
 v_cts_id NUMBER;
+V_CASE_DETAIL_ID NUMBER;
+V_CASE_ID NUMBER;
+V_PT_SEQ NUMBER;
+V_PTL_SEQ NUMBER;
+V_KFI_SQ NUMBER;
+V_CICRC_SEQ NUMBER;
 -- 
 TYPE t_pt 
 IS 
@@ -33,10 +43,9 @@ IS
   -- 
   a_k3 T_K3 := T_k3(); 
   -- 
-BEGIN 
-  FOR rec IN c 
-  LOOP 
-  END LOOP; 
+BEGIN
+-- GET THE 
+  
 EXCEPTION 
 WHEN OTHERS THEN 
   raise_application_error(-20001, SQLERRM); 
