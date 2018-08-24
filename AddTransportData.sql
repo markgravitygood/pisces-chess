@@ -1,23 +1,27 @@
 DECLARE 
   -- 
   CURSOR c IS 
-    SELECT cts.claim_transaction_summary_id, 
-           cts.case_detail_id, B.PAT_PROCEDURE_ID
-    FROM   claim_transaction_summary cts 
-    INNER JOIN CLAIM_TRANSACTION_DETAIL CTD
-    ON CTS.CLAIM_TRANSACTION_SUMMARY_ID = CTD.CLAIM_TRANSACTION_SUMMARY_ID
-    INNER JOIN PAT_PROCEDURE_BALANCE B
-    ON CTD.PAT_PROCEDURE_BALANCE_ID = B.PAT_PROCEDURE_BALANCE_ID
-    WHERE  cts.claim_transaction_summary_id = v_cts_id;
+    SELECT     cts.claim_transaction_summary_id, 
+               cts.case_detail_id, 
+               B.pat_procedure_id, 
+               P.encounter_id 
+    FROM       claim_transaction_summary cts 
+    inner join claim_transaction_detail CTD 
+    ON         CTS.claim_transaction_summary_id = CTD.claim_transaction_summary_id 
+    inner join pat_procedure_balance B 
+    ON         CTD.pat_procedure_balance_id = B.pat_procedure_balance_id 
+    inner join pat_procedure P 
+    ON         B.pat_procedure_id = P.pat_procedure_id 
+    WHERE      cts.claim_transaction_summary_id = v_cts_id; 
 
 -- 
-v_cts_id NUMBER;
-V_CASE_DETAIL_ID NUMBER;
-V_CASE_ID NUMBER;
-V_PT_SEQ NUMBER;
-V_PTL_SEQ NUMBER;
-V_KFI_SQ NUMBER;
-V_CICRC_SEQ NUMBER;
+v_cts_id         NUMBER := 0; 
+v_case_detail_id NUMBER; 
+v_case_id        NUMBER; 
+v_pt_seq         NUMBER; 
+v_ptl_seq        NUMBER; 
+v_kfi_sq         NUMBER; 
+v_cicrc_seq      NUMBER; 
 -- 
 TYPE t_pt 
 IS 
@@ -43,10 +47,27 @@ IS
   -- 
   a_k3 T_K3 := T_k3(); 
   -- 
-BEGIN
--- GET THE 
-  
+BEGIN 
+  -- GET THE FOREIGN KEYS NECESSARY 
+  SELECT     cts.case_detail_id, 
+             B.pat_procedure_id, 
+             P.encounter_id 
+  INTO       v_case_detail_id, 
+             v_pat_procedure_id, 
+             v_encounter_id 
+  FROM       claim_transaction_summary cts 
+  inner join claim_transaction_detail CTD 
+  ON         CTS.claim_transaction_summary_id = CTD.claim_transaction_summary_id 
+  inner join pat_procedure_balance B 
+  ON         CTD.pat_procedure_balance_id = B.pat_procedure_balance_id 
+  inner join pat_procedure P 
+  ON         B.pat_procedure_id = P.pat_procedure_id 
+  WHERE      cts.claim_transaction_summary_id = v_cts_id; 
+-- CREATE PAT_TRIP_LEG DATA -- PAT_TRIP_LEG
+-- CREATE PAT_TRIP DATA -- PAT_TRIP
+-- CREATE CRC DATA -- CONDITIONS_INDICATOR_CRC
+-- CREATE K3 DATA -- K3_FILE_INFO
 EXCEPTION 
 WHEN OTHERS THEN 
-  raise_application_error(-20001, SQLERRM); 
+  Raise_application_error(-20001, SQLERRM); 
 END;
