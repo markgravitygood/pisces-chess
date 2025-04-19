@@ -10,11 +10,13 @@
 --
 -- #############################################################################################
 --
-set linesize 1200 verify off feedback 100
+set linesize 1200; 
+set verify off; 
+set feedback 100;
 
-accept gets default 100000 prompt "Min buffer gets [100,000] "
+accept gets default 100000 prompt "Min buffer gets [100,000] ";
 
-col sql_text for a1000
+col sql_text for a1000;
 
 select
     s.BUFFER_GETS,
@@ -33,5 +35,6 @@ where
 order by
     s.buffer_gets desc
 /
-set feedback on
+set feedback on;
+
 
